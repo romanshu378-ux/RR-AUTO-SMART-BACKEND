@@ -1,18 +1,14 @@
 import express from "express";
 import cors from "cors";
-import pkg from "pg";
-
-const { Pool } = pkg;
+import mysql from "mysql2/promise";
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-// PostgreSQL connection (Aiven compatible)
-const pool = new Pool({
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT || 5432,
+  port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
@@ -21,21 +17,18 @@ const pool = new Pool({
   }
 });
 
-// health route
+// health check
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
 
-// DB test route
+// db test
 app.get("/api/test-db", async (req, res) => {
   try {
-    const result = await pool.query("SELECT NOW()");
-    res.json({
-      success: true,
-      time: result.rows[0]
-    });
+    const [rows] = await pool.query("SELECT 1 AS result");
+    res.json({ success: true, rows });
   } catch (err) {
-    console.error("DB error:", err.message);
+    console.error("DB ERROR:", err.message);
     res.status(500).json({
       success: false,
       error: err.message
