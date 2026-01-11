@@ -1,28 +1,17 @@
 {
-  "name": "enterprise-cms-&-crm-backend",
+  "name": "enterprise-cms-crm-backend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^5.2.1",
-    "multer": "^2.0.2",
-    "jsonwebtoken": "^9.0.3",
-    "fs": "^0.0.1-security",
-    "path": "^0.12.7",
-    "url": "^0.11.4",
+    "cors": "^2.8.5",
     "mysql2": "^3.16.0",
+    "jsonwebtoken": "^9.0.3",
     "bcrypt": "^6.0.0",
-    "cors": "^2.8.5"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
-    
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "multer": "^2.0.2"
   }
 }
