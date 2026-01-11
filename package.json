@@ -6,13 +6,10 @@
   "scripts": {
     "start": "node index.js"
   },
-  "dependencies": {
+"dependencies": {
   "express": "^5.2.1",
   "cors": "^2.8.5",
-  "jsonwebtoken": "^9.0.3",
-  "bcrypt": "^6.0.0",
-  "multer": "^2.0.2",
-  "pg": "^8.11.5"
- }
+  "mysql2": "^3.16.0"
+}
 
 }
