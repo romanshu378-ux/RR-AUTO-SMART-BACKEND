@@ -1,0 +1,5 @@
+{
+  "name": "Enterprise CMS & CRM Backend",
+  "description": "A high-performance Node.js/Express backend for a dual-panel system (Admin & Customer) featuring JWT auth, MySQL persistence, and Multer-based media management.",
+  "requestFramePermissions": []
+}
