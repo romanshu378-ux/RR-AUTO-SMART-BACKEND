@@ -1,75 +1,49 @@
 import express from "express";
 import cors from "cors";
-import mysql from "mysql2/promise";
+import pkg from "pg";
+
+const { Pool } = pkg;
 
 const app = express();
 
-// middlewares
-app.use(cors({
-  origin: "*"
-}));
+app.use(cors());
 app.use(express.json());
 
-// ==========================
-// DATABASE CONNECTION
-// ==========================
-let pool;
+// PostgreSQL connection (Aiven compatible)
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 5432,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
-try {
-  pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-  });
-  console.log("✅ MySQL pool created");
-} catch (err) {
-  console.error("❌ DB pool creation failed:", err.message);
-}
-
-// ==========================
-// ROUTES
-// ==========================
-
-// health check
+// health route
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
 
-// database test route (SAFE)
+// DB test route
 app.get("/api/test-db", async (req, res) => {
   try {
-    if (!pool) {
-      return res.status(500).json({
-        success: false,
-        message: "Database pool not initialized"
-      });
-    }
-
-    const [rows] = await pool.query("SELECT 1 AS result");
+    const result = await pool.query("SELECT NOW()");
     res.json({
       success: true,
-      db: "connected",
-      result: rows
+      time: result.rows[0]
     });
-  } catch (error) {
-    console.error("❌ DB error:", error.message);
+  } catch (err) {
+    console.error("DB error:", err.message);
     res.status(500).json({
       success: false,
-      message: "Database connection failed",
-      error: error.message
+      error: err.message
     });
   }
 });
 
-// ==========================
-// SERVER START
-// ==========================
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`🚀 Server started on port ${PORT}`);
+  console.log(`Server started on port ${PORT}`);
 });
